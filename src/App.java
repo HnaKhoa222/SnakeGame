@@ -18,8 +18,7 @@ public class App {
         Snake snakeGame = new Snake();
         frame.add(snakeGame);
         frame.pack();
-        frame.setVisible(true);
-
-        
-    }
+        frame.setVisible(true);   
+        snakeGame.requestFocus();
+    } 
 }
