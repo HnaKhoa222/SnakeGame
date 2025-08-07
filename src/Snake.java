@@ -1,3 +1,4 @@
+import com.sun.net.httpserver.Headers;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.HashSet;
@@ -39,18 +40,18 @@ public class Snake extends JPanel implements ActionListener, KeyListener {
             switch (this.direction) {
                 case 'D' -> {
                     this.velocityX = 0;
-                    this.velocityY = tileSize/4;
+                    this.velocityY = tileSize;
                 }
                 case 'U' -> {
                     this.velocityX = 0;
-                    this.velocityY = -tileSize/4;
+                    this.velocityY = -tileSize;
                 }
                 case 'L' -> {
-                    this.velocityX = -tileSize/4;
+                    this.velocityX = -tileSize;
                     this.velocityY = 0;
                 }
                 case 'R' -> {
-                    this.velocityX = tileSize/4;
+                    this.velocityX = tileSize;
                     this.velocityY = 0;
                 }
                 default -> {
@@ -117,7 +118,7 @@ public class Snake extends JPanel implements ActionListener, KeyListener {
             snakeBodyImage = new ImageIcon(getClass().getResource("./sprites/snakeBody.png")).getImage();
             
             loadMap();
-            gameLoop = new Timer(50, this);
+            gameLoop = new Timer(200, this);
             gameLoop.start();
             // System.out.println(walls.size());
             // System.out.println(snakeBody.size());
@@ -157,13 +158,29 @@ public class Snake extends JPanel implements ActionListener, KeyListener {
         }
         for (Block bodypart : snakeBody){
             g.drawImage(bodypart.image, bodypart.x, bodypart.y, bodypart.width, bodypart.height, null);
-            
         }
     }
 
     public void move(){
+        snakeBody.add(new Block(snakeBodyImage, snakeHead.x, snakeHead.y, tileSize, tileSize));
+        snakeBody.removeFirst();
+
         snakeHead.x += snakeHead.velocityX;
         snakeHead.y += snakeHead.velocityY;
+        for (Block wall : walls) {
+            if (collision(snakeHead, wall)){
+                snakeHead.x -= snakeHead.velocityX;
+                snakeHead.y -= snakeHead.velocityY;
+                break;
+            }
+        }
+    }
+
+    public boolean collision(Block a, Block b){
+        return a.x < b.x + b.width &&
+               a.x + a.width > b.x &&
+               a.y < b.y + b.height &&
+               a.y + a.height > b.y;
     }
 
     @Override
